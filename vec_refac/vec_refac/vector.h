@@ -1,16 +1,14 @@
 #pragma once
-
-//Länge des "Buffers"
-#define EXTRA_LENGTH 50
-
+#include <algorithm>
+#include <memory>
 
 template <class T>
 class vector
 {
 private:
-	T* vec = new T[50];			//"Start"Vektor
-	int used_fields = 0;		//Anzahl genützter Datenfelder im Vektor
-	int length = 50;			//Physikalische Länge des Vektors
+	std::unique_ptr<T> vec = std::make_unique<T[]>(0);		//"Start"Vektor
+	int used_fields;		// number of used elemnts of the vector
+	int length;			//real length of the vector
 public:
 	vector() {};
 	~vector();
@@ -19,14 +17,16 @@ public:
 	void pushback(T);			//fügt am Ende des Vektors übergebenen Wert ein
 	void clear();				//setzt alle benützten Datenfelder des Vektors auf null
 	int size();					//gibt Länge des physikalischen Vektors zurück
-	T at(int);					//gibt Inhalt an übergebener Stelle zurück
+	T& at(int);					//gibt Inhalt an übergebener Stelle zurück
+	//T& operator= (const vector&);
+	//const T& operator[] (size_type) const;
+	//T& operator[] (size_type);
 };
 
 
 template<class T>
 vector<T>::~vector() {
-	//Destruktor löscht array
-	delete[] vec;
+	
 }
 
 template<class T>

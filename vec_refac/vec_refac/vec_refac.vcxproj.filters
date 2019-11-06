@@ -21,6 +21,9 @@
     <ClCompile Include="vector.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vector.h">
