@@ -11,17 +11,27 @@ private:
 	int length;			//real length of the vector
 public:
 	vector(int);
+	vector(const vector&);
 	~vector();
 	void resize(int);			//verkürzt Vektor auf übergebene Länge
 	void popback();				//entfernt letztes Element
-	void pushback(T&);			//fügt am Ende des Vektors übergebenen Wert ein
+	void pushback(const T&);			//fügt am Ende des Vektors übergebenen Wert ein
 	void clear();				//setzt alle benützten Datenfelder des Vektors auf null
-	int size();					//gibt Länge des physikalischen Vektors zurück
-	T& at(int);					//gibt Inhalt an übergebener Stelle zurück
-	//T& operator= (const vector&);
-	//const T& operator[] (size_type) const;
-	//T& operator[] (size_type);
+	int size() const;			//gibt Länge des physikalischen Vektors zurück
+	int capacity() const;
+	T* at(int) const;					//gibt Inhalt an übergebener Stelle zurück
+	T& operator= (const vector&);
+	T& operator[] (int);
+	const T& operator[] (int) const;
 };
+
+template<class T>
+vector<T>::vector(const vector& copy) {
+	used_fields = copy->size();
+	length = copy->capacity();
+	vec = std::make_unique<T[]>(length);
+	std::copy(std::begin(copy), copy+copy->size() , std::begin(vec));
+}
 
 template<class T>
 vector<T>::vector(int size) : length(size)  {
@@ -32,6 +42,26 @@ template<class T>
 vector<T>::~vector() {
 	
 }
+
+template<class T>
+T& vector<T>::operator[](int pos) {
+	return at(pos);
+}
+
+template<class T>
+const T& vector<T>::operator[](int pos) const {
+	return at(pos);
+}
+
+template<class T>
+T& vector<T>::operator=(const vector& copy) {
+	used_fields = copy.size();
+	length = copy.capacity();
+	vec.resize(length);
+	std::copy(std::begin(copy), std::begin(copy)+used_fields, std::begin(vec));
+}
+
+
 
 template<class T>
 void vector<T>::clear() {
@@ -76,10 +106,10 @@ void vector<T>::popback() {
 }
 
 template<class T>
-void vector<T>::pushback(T& value) {
+void vector<T>::pushback(const T& value) {
 	//bei Bedarf Vekotr verlängern
 	if (used_fields >= length) {
-		resize(1.3 * length);
+		resize(int(1.3 * length));
 	}
 	//Wert in das erste freie Feld des Vektors schreiben und physikalische Länge anpassen
 	vec[used_fields] = value;
@@ -87,16 +117,21 @@ void vector<T>::pushback(T& value) {
 }
 
 template<class T>
-int vector<T>::size() {
+int vector<T>::size() const {
 	return used_fields;
 }
 
 template<class T>
-T& vector<T>::at(int pos) {
+int vector<T>::capacity() const {
+	return length;
+}
+
+template<class T>
+T* vector<T>::at(int pos) const {
 	//gibt Wert an pos zurück; falls pos nicht im Vektor wird NULL returned
 	if (pos < used_fields) {
 		return vec[pos];
 	}
-	return nullptr;
+	return NULL;
 }
 

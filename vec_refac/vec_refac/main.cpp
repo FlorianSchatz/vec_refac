@@ -14,7 +14,7 @@ int main() {
 }
 
 void test(int number) {
-	vector <int> Vektor;
+	vector <int> Vektor(0);
 
 	auto t1 = std::chrono::steady_clock::now(); //Aktueller Zeitpunkt wird gespeichert
 
@@ -31,7 +31,7 @@ void test(int number) {
 	std::string name = "data_25.csv";
 
 	data.open(name, std::ofstream::app);
-	data << number << ";" << d_nano / number << ";" << EXTRA_LENGTH << "\n";
+	data << number << ";" << d_nano / number << ";" << "\n";
 	data.close();
 
 }
