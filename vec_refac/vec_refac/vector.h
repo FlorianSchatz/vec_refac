@@ -6,25 +6,25 @@ template <class T>
 class vector
 {
 private:
-	std::unique_ptr<T> vec;		//"Start"Vektor
-	int used_fields;		// number of used elemnts of the vector
-	int length;			//real length of the vector
+	std::unique_ptr<T> vec;					//"Start"Vektor
+	int used_fields;						// number of used elemnts of the vector
+	int length;								//real length of the vector
 public:
 	vector(int);
 	vector(const vector&);
-	~vector();
-	void resize(int);			//verkürzt Vektor auf übergebene Länge
-	void popback();				//entfernt letztes Element
-	void pushback(const T&);			//fügt am Ende des Vektors übergebenen Wert ein
-	void clear();				//setzt alle benützten Datenfelder des Vektors auf null
-	int size() const;			//gibt Länge des physikalischen Vektors zurück
+	~vector();								//Destruktoer
+	void resize(int);						//verkürzt Vektor auf übergebene Länge
+	void popback();							//entfernt letztes Element
+	void pushback(const T&);				//fügt am Ende des Vektors übergebenen Wert ein
+	void clear();							//setzt alle benützten Datenfelder des Vektors auf null
+	int size() const;						//gibt Länge des physikalischen Vektors zurück
 	int capacity() const;
-	T* at(int) const;					//gibt Inhalt an übergebener Stelle zurück
-	T& operator= (const vector&);
+	T* at(int) const;						//gibt Inhalt an übergebener Stelle zurück
+	T& operator= (const vector& copy);
 	T& operator[] (int);
 	const T& operator[] (int) const;
 };
-
+//Kopierkonstruktor
 template<class T>
 vector<T>::vector(const vector& copy) {
 	used_fields = copy->size();
@@ -32,37 +32,41 @@ vector<T>::vector(const vector& copy) {
 	vec = std::make_unique<T[]>(length);
 	std::copy(std::begin(copy), copy+copy->size() , std::begin(vec));
 }
-
+//Konstruktor erzeugt Unique Ponter (Smart Pointer) auf Vektor
 template<class T>
 vector<T>::vector(int size) : length(size)  {
 	vec = std::make_unique<T[]>(size);
 }
-
+//Destruktor
 template<class T>
 vector<T>::~vector() {
 	
 }
 
+//gibt Wert/Inhalt an Position zurück
 template<class T>
 T& vector<T>::operator[](int pos) {
 	return at(pos);
-}
-
+}														// SOLL DAS ZWEIMAL DRIN SEIN!!!???
+//gibt Wert/Inhalt an Position zurück
 template<class T>
 const T& vector<T>::operator[](int pos) const {
 	return at(pos);
 }
-
+//Überladung des Vergleichsoperators
 template<class T>
 T& vector<T>::operator=(const vector& copy) {
 	used_fields = copy.size();
 	length = copy.capacity();
 	vec.resize(length);
+	//Kopieren des Vektors
 	std::copy(std::begin(copy), std::begin(copy)+used_fields, std::begin(vec));
+	//Referenz auf das aktuelle Objekt zurückliefern
+	return this&;
 }
 
 
-
+//Inhalt der benutzten Felder wird gelöscht
 template<class T>
 void vector<T>::clear() {
 	used_fields = 0;
@@ -116,11 +120,12 @@ void vector<T>::pushback(const T& value) {
 	used_fields++;
 }
 
+//gibt Größe des Vektors zurück
 template<class T>
 int vector<T>::size() const {
 	return used_fields;
 }
-
+//gibt die Gesamtkapazität des Vektors zurück 
 template<class T>
 int vector<T>::capacity() const {
 	return length;
