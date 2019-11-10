@@ -19,18 +19,18 @@ public:
 	void clear();							//setzt alle benützten Datenfelder des Vektors auf null
 	int size() const;						//gibt Länge des physikalischen Vektors zurück
 	int capacity() const;
-	T* at(int) const;						//gibt Inhalt an übergebener Stelle zurück
-	T& operator= (const vector& copy);
+	T& at(int) const;						//gibt Inhalt an übergebener Stelle zurück
+	vector<T>& operator= (const vector& copy);
 	T& operator[] (int);
 	const T& operator[] (int) const;
 };
 //Kopierkonstruktor
 template<class T>
 vector<T>::vector(const vector& copy) {
-	used_fields = copy->size();
-	length = copy->capacity();
+	used_fields = copy.size();
+	length = copy.capacity();
 	vec = std::make_unique<T[]>(length);
-	std::copy(std::begin(copy), copy+copy->size() , std::begin(vec));
+	std::copy(copy, copy+copy.size() , std::begin(vec));
 }
 //Konstruktor erzeugt Unique Ponter (Smart Pointer) auf Vektor
 template<class T>
@@ -55,14 +55,14 @@ const T& vector<T>::operator[](int pos) const {
 }
 //Überladung des Vergleichsoperators
 template<class T>
-T& vector<T>::operator=(const vector& copy) {
+vector<T>& vector<T>::operator=(const vector& copy) {
 	used_fields = copy.size();
 	length = copy.capacity();
 	vec.resize(length);
 	//Kopieren des Vektors
 	std::copy(std::begin(copy), std::begin(copy)+used_fields, std::begin(vec));
 	//Referenz auf das aktuelle Objekt zurückliefern
-	return this&;
+	return *this;
 }
 
 
@@ -132,7 +132,7 @@ int vector<T>::capacity() const {
 }
 
 template<class T>
-T* vector<T>::at(int pos) const {
+T& vector<T>::at(int pos) const {
 	//gibt Wert an pos zurück; falls pos nicht im Vektor wird NULL returned
 	if (pos < used_fields) {
 		return vec[pos];
