@@ -10,21 +10,7 @@ TEST_CASE("Empty Vector", "[vector]") {
 	copy.resize(0);
 	REQUIRE(copy.size() == 0);
 	REQUIRE(copy.capacity() == 0);
-	REQUIRE_THROWS_AS(copy.at(0), std::out_of_range);
-
-
-	/*
-	temp.pushback(1);
-	REQUIRE(temp.size() == 1);
-	REQUIRE(temp.capacity() == 10);
-	REQUIRE(temp[0] == temp.at(temp.size()));
-	REQUIRE(temp[0] == temp.at(0));
-	REQUIRE(temp.at(1) == temp.at(temp.size()));
-	vector<int> tmp(2);
-	tmp.pushback(1);
-	temp = tmp;
-	*/
-	
+	REQUIRE_THROWS_AS(copy.at(1), std::out_of_range);	
 }
 
 TEST_CASE("big and small vec", "[vector]") {
@@ -35,8 +21,8 @@ TEST_CASE("big and small vec", "[vector]") {
 	REQUIRE(big_vec.capacity() == 100);
 	big_vec.pushback(3.141592);
 	big_vec.pushback(34);
-	REQUIRE(big_vec.at(50) == 49.21);
-	REQUIRE(big_vec[49] == 49.21);
+	REQUIRE(big_vec.at(1) == 0.21);
+	REQUIRE(big_vec[48] == 48.21);
 	REQUIRE(big_vec.capacity() == unsigned long int(100 * 1.3));
 	big_vec.resize(50);
 	REQUIRE(big_vec.capacity()== 50);
@@ -48,18 +34,19 @@ TEST_CASE("big and small vec", "[vector]") {
 	reeeel_big_vec = small_vec;
 	REQUIRE(reeeel_big_vec.size() == small_vec.size());
 	small_vec = big_vec;
-	REQUIRE(small_vec.at(17) == big_vec.at(17));
+	REQUIRE(small_vec.at(10) == big_vec.at(10));
 	REQUIRE(small_vec.size() == big_vec.size());
 	reeeel_big_vec.clear();
 	REQUIRE(reeeel_big_vec.size() == 0);
 	REQUIRE(reeeel_big_vec.capacity() == 10);
-	for (unsigned long int i = 0; i < 999; ++i) {
-		big_vec.pushback(i + 0.21);
+	for (unsigned long int i = 0; i < 9999; i++) {
+		reeeel_big_vec.pushback(i + 0.21);
 	}
-	REQUIRE_THROWS_AS(reeeel_big_vec[999], std::out_of_range);
-	REQUIRE(reeeel_big_vec[998] == 998.21);
+	REQUIRE_THROWS_AS(reeeel_big_vec[9999], std::out_of_range);
+	//std::cout << reeeel_big_vec[10];
+	REQUIRE(reeeel_big_vec[10] == 10.21);
 	
-
+	
 	
 
 

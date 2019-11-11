@@ -31,7 +31,14 @@ vector<T>::vector(const vector& copy1) {
 	used_fields = copy1.size();
 	length = copy1.capacity();
 	vec = std::make_unique<T[]>(length);
-	if(used_fields) std::copy(&copy1.at(1), &copy1.at(copy1.size()), &vec[0]);
+	//if(used_fields) std::copy(&copy1.at(1), &copy1.at(copy1.size()), &vec[0]);
+	if (used_fields) {
+		for (unsigned long int i = 0; i < length; i++) {
+			if (i < used_fields) {
+				vec[i] = copy1[i];
+			}
+		}
+	}
 }
 
 template<class T>
@@ -42,33 +49,37 @@ vector<T>::vector(unsigned long int size) : length(size)  {
 
 template<class T>
 T& vector<T>::operator[](unsigned long int pos) {
-	if (pos < used_fields) {
-		//pos in bounds of vec
-		return vec[pos];
-	}
-	else if (pos >= used_fields) {
+	if (pos >= used_fields) {
 		throw std::out_of_range("Out of range");
 	}
+	return vec[pos];
 }
 
 template<class T>
 const T& vector<T>::operator[](unsigned long int pos) const {
-	if (pos < used_fields) {
-		return vec[pos];
-	}
-	else if (pos >= used_fields) {
+	if (pos >= used_fields) {
 		throw std::out_of_range("out of range");
 	}
+	return vec[pos];
 }
 
 template<class T>
 vector<T>& vector<T>::operator=(const vector& copy1) {
+	//this->clear();
 	used_fields = copy1.size();
-	length = copy1.capacity();
+	//length = copy1.capacity();
 	//adjust length of this vec
-	this->resize(length);
+	this->resize(copy1.capacity());
 	//copy all data to this vec
-	if(used_fields) std::copy(&copy1.at(1), &copy1.at(copy1.size()), &vec[0]);
+	//if(used_fields) std::copy(&copy1.at(1), &copy1.at(copy1.size()), &vec[0]);
+	if (used_fields) {
+		for (unsigned long int i = 0; i < length; i++) {
+			if (i < used_fields) {
+				vec[i] = copy1[i];
+			}
+		}
+	}
+
 	return *this;
 }
 
@@ -84,7 +95,15 @@ void vector<T>::resize(unsigned long int nu_length) {
 		//create new vec using unique_ptr
 		std::unique_ptr<T[]> nu_vec = std::make_unique<T[]>(nu_length);
 		//copy all relevant data to new vec
-		if(used_fields) std::copy(&(this->at(1)), nu_length > length ? &this->at(used_fields) : &this->at(nu_length), &nu_vec[0]);	//FIX!!!
+		//T* end = (nu_length > length) ? &this->at(used_fields) : &this->at(nu_length);
+		//if(used_fields > 0) std::copy(&(this->at(1)), end, &nu_vec[0]);	//FIX!!!
+		if (used_fields) {
+			for (unsigned long int i = 0; i < nu_length; i++) {
+				if (i < used_fields) {
+					nu_vec[i] = vec[i];
+				}
+			}
+		}
 		if (nu_length < used_fields) {
 			//adjust used_fields when vec has been shortened
 			used_fields = nu_length;
@@ -104,7 +123,7 @@ template<class T>
 void vector<T>::pushback(const T& value) {
 	if (used_fields >= length) {
 		//no remaining free fields, thus resize vec
-		unsigned long int nu_length = 1.3 * length;
+		unsigned long int nu_length = (unsigned long int)round(1.3 * length); 
 		resize(nu_length);
 	}
 	vec[used_fields] = value;
@@ -126,11 +145,6 @@ T& vector<T>::at(unsigned long int pos) const {
 	//boundaries check
 	if (pos == 0 || pos > used_fields) {
 		throw std::out_of_range ("out of range");
-		// return bla
-		//issue: no return possible, but one is needed (warning)
-	} 
-	else if (pos <= used_fields) {
-		//normal case: no boundaries crossed
-		return vec[pos-1];
 	}
+	return vec[pos - 1];
 }
