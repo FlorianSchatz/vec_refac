@@ -31,7 +31,7 @@ vector<T>::vector(const vector& copy1) {
 	used_fields = copy1.size();
 	length = copy1.capacity();
 	vec = std::make_unique<T[]>(length);
-	std::copy(&copy1.at(0), &copy1.at(copy1.size()), &vec[0]);
+	if(used_fields) std::copy(&copy1.at(1), &copy1.at(copy1.size()), &vec[0]);
 }
 
 template<class T>
@@ -47,7 +47,7 @@ T& vector<T>::operator[](unsigned long int pos) {
 		return vec[pos];
 	}
 	else if (pos >= used_fields) {
-		//throw std::out_of_range("Out of range");
+		throw std::out_of_range("Out of range");
 	}
 }
 
@@ -57,7 +57,7 @@ const T& vector<T>::operator[](unsigned long int pos) const {
 		return vec[pos];
 	}
 	else if (pos >= used_fields) {
-		//throw std::out_of_range("out of range");
+		throw std::out_of_range("out of range");
 	}
 }
 
@@ -68,7 +68,7 @@ vector<T>& vector<T>::operator=(const vector& copy1) {
 	//adjust length of this vec
 	this->resize(length);
 	//copy all data to this vec
-	std::copy(&copy1.at(0), &copy1.at(copy1.size()), &vec[0]);
+	if(used_fields) std::copy(&copy1.at(1), &copy1.at(copy1.size()), &vec[0]);
 	return *this;
 }
 
@@ -84,7 +84,7 @@ void vector<T>::resize(unsigned long int nu_length) {
 		//create new vec using unique_ptr
 		std::unique_ptr<T[]> nu_vec = std::make_unique<T[]>(nu_length);
 		//copy all relevant data to new vec
-		std::copy(&(this->at(0)), nu_length > length ? &this->at(used_fields) : &this->at(nu_length), &nu_vec[0]);
+		if(used_fields) std::copy(&(this->at(1)), nu_length > length ? &this->at(used_fields) : &this->at(nu_length), &nu_vec[0]);	//FIX!!!
 		if (nu_length < used_fields) {
 			//adjust used_fields when vec has been shortened
 			used_fields = nu_length;
@@ -104,7 +104,8 @@ template<class T>
 void vector<T>::pushback(const T& value) {
 	if (used_fields >= length) {
 		//no remaining free fields, thus resize vec
-		resize(int(1.3 * length));
+		unsigned long int nu_length = 1.3 * length;
+		resize(nu_length);
 	}
 	vec[used_fields] = value;
 	used_fields++;
@@ -124,9 +125,11 @@ template<class T>
 T& vector<T>::at(unsigned long int pos) const {
 	//boundaries check
 	if (pos == 0 || pos > used_fields) {
-	//	throw std::out_of_range ("out of range");
+		throw std::out_of_range ("out of range");
+		// return bla
+		//issue: no return possible, but one is needed (warning)
 	} 
-	else if (pos < used_fields) {
+	else if (pos <= used_fields) {
 		//normal case: no boundaries crossed
 		return vec[pos-1];
 	}
