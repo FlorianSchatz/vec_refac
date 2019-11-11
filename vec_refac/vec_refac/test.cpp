@@ -7,6 +7,10 @@ TEST_CASE("Empty Vector", "[vector]") {
 	REQUIRE(copy.size() == 0);
 	REQUIRE(copy.capacity() == 10);
 	vector<int> temp(copy);
+	copy.resize(0);
+	REQUIRE(copy.size() == 0);
+	REQUIRE(copy.capacity() == 0);
+	//REQUIRE_THROWS_AS(copy.at(0), std::out_of_range);
 
 
 
@@ -30,7 +34,7 @@ TEST_CASE("Empty Vector", "[vector]") {
 
 
 
-
+	/*
 	temp.pushback(1);
 	REQUIRE(temp.size() == 1);
 	REQUIRE(temp.capacity() == 10);
@@ -40,6 +44,7 @@ TEST_CASE("Empty Vector", "[vector]") {
 	vector<int> tmp(2);
 	tmp.pushback(1);
 	temp = tmp;
+	*/
 
 	
 	
