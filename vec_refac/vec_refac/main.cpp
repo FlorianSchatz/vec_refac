@@ -6,12 +6,14 @@
 
 void test(int);
 void test2(int);
+/*
 int main() {
 	for (int i = 10; i < 100000; i *= 10) {
 		test(i);
 	}
 	std::cout << "fertig\n";
 }
+*/
 
 void test(int number) {
 	vector <int> Vektor(0);

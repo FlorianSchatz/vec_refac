@@ -6,7 +6,7 @@ template <class T>
 class vector
 {
 private:
-	std::unique_ptr<T> vec;					//"Start"Vektor
+	std::unique_ptr<T[]> vec;					//"Start"Vektor
 	int used_fields;						// number of used elemnts of the vector
 	int length;								//real length of the vector
 public:
@@ -26,11 +26,11 @@ public:
 };
 //Kopierkonstruktor
 template<class T>
-vector<T>::vector(const vector& copy) {
-	used_fields = copy.size();
-	length = copy.capacity();
+vector<T>::vector(const vector& copy1) {
+	used_fields = copy1.size();
+	length = copy1.capacity();
 	vec = std::make_unique<T[]>(length);
-	std::copy(copy, copy+copy.size() , std::begin(vec));
+	std::copy(&copy1.at(0), &copy1.at(copy1.size()) ,	&vec[0]);
 }
 //Konstruktor erzeugt Unique Ponter (Smart Pointer) auf Vektor
 template<class T>
@@ -46,21 +46,28 @@ vector<T>::~vector() {
 //gibt Wert/Inhalt an Position zurück
 template<class T>
 T& vector<T>::operator[](int pos) {
-	return at(pos);
-}														// SOLL DAS ZWEIMAL DRIN SEIN!!!???
+	if (pos < used_fields) {
+		return vec[pos];
+	}
+	return vec[used_fields - 1];
+}														// SOLL DAS ZWEIMAL DRIN SEIN!!!??? JA
 //gibt Wert/Inhalt an Position zurück
 template<class T>
 const T& vector<T>::operator[](int pos) const {
-	return at(pos);
+	if (pos < used_fields) {
+		return vec[pos];
+	}
+	//Wir wollen das so!!!!!!!!!
+	return vec[used_fields - 1];
 }
 //Überladung des Vergleichsoperators
 template<class T>
-vector<T>& vector<T>::operator=(const vector& copy) {
-	used_fields = copy.size();
-	length = copy.capacity();
-	vec.resize(length);
+vector<T>& vector<T>::operator=(const vector& copy1) {
+	used_fields = copy1.size();
+	length = copy1.capacity();
+	this->resize(length);
 	//Kopieren des Vektors
-	std::copy(std::begin(copy), std::begin(copy)+used_fields, std::begin(vec));
+	std::copy(&copy1.at(0), &copy1.at(copy1.size()), &vec[0]);
 	//Referenz auf das aktuelle Objekt zurückliefern
 	return *this;
 }
@@ -77,7 +84,7 @@ void vector<T>::resize(int nu_length) {
 	if (nu_length != length) {
 		//Übergebene Länge entspricht nicht der bereits Vorhandenen
 		//neues Array allozieren
-		std::unique_ptr<T> nu_vec = std::make_unique<T[]>(nu_length);
+		std::unique_ptr<T[]> nu_vec = std::make_unique<T[]>(nu_length);
 		/*for (int i = 0; i < length; i++) {
 			if (i < nu_length) {
 				//Elementweise kopieren
@@ -85,8 +92,8 @@ void vector<T>::resize(int nu_length) {
 			}
 			}
 			*/
-		std::copy(std::begin(vec), (nu_length > length ? std::end(vec) : vec+nu_length), std::begin(nu_vec));
-		
+		T* end = (nu_length > length ? &this->at(used_fields) : &this->at(nu_length));
+		std::copy(&(this->at(0)), end, &nu_vec[0]);		
 		if (nu_length < used_fields) {
 			//Vektor wurde so gekürzt, dass Daten verloren gegangen sind -> Nutzdatenlänge anpassen
 			used_fields = nu_length;
@@ -95,7 +102,7 @@ void vector<T>::resize(int nu_length) {
 		length = nu_length;
 		//Zeiger auf neuen Vektor umbiegen
 		
-		vec = nu_vec;	//Operator überladen Problem?
+		vec = std::move(nu_vec);	//Operator überladen Problem?
 	}
 }
 
@@ -135,8 +142,9 @@ template<class T>
 T& vector<T>::at(int pos) const {
 	//gibt Wert an pos zurück; falls pos nicht im Vektor wird NULL returned
 	if (pos < used_fields) {
-		return vec[pos];
+		return vec[pos-1];
 	}
-	return NULL;
+	//Wir wollen das so!!!!!!!!!
+	return vec[used_fields - 1];
 }
 
