@@ -19,7 +19,7 @@ public:
 	void clear();							//setzt alle benützten Datenfelder des Vektors auf null
 	int size() const;						//gibt Länge des physikalischen Vektors zurück
 	int capacity() const;
-	T& at(int) const;						//gibt Inhalt an übergebener Stelle zurück
+	T& at(unsigned long int) const;						//gibt Inhalt an übergebener Stelle zurück
 	vector<T>& operator= (const vector& copy);
 	T& operator[] (int);
 	const T& operator[] (int) const;
@@ -137,11 +137,14 @@ template<class T>
 int vector<T>::capacity() const {
 	return length;
 }
-
+//WIR BRAUCHEN GRO?ES ZAHL LONG DONG SILVER
 template<class T>
-T& vector<T>::at(int pos) const {
+T& vector<T>::at(unsigned long int pos) const {
 	//gibt Wert an pos zurück; falls pos nicht im Vektor wird NULL returned
-	if (pos < used_fields) {
+	if (pos == 0) {
+		return vec[0];
+	} 
+	else if (pos < used_fields) {
 		return vec[pos-1];
 	}
 	//Wir wollen das so!!!!!!!!!
