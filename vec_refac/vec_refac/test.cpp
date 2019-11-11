@@ -13,27 +13,6 @@ TEST_CASE("Empty Vector", "[vector]") {
 	//REQUIRE_THROWS_AS(copy.at(0), std::out_of_range);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	/*
 	temp.pushback(1);
 	REQUIRE(temp.size() == 1);
